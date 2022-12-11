@@ -17,8 +17,7 @@ export const PlacesProvider = ({ children }: Props) => {
 	const [state, dispatch] = useReducer(placesReducer, INITIAL_STATE);
 
 	useEffect(() => {
-		getUserLocation()
-		.then((lngLat) => dispatch({ type: 'setUserLocation', payload: lngLat }));
+		getUserLocation().then((lngLat) => dispatch({ type: 'setUserLocation', payload: lngLat }));
 	}, []);
 
 	return (
