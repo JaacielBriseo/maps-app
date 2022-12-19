@@ -3,8 +3,8 @@ import { MapContext, PlacesContext } from '../context';
 import { LoadingPlaces } from '.';
 import { Feature } from '../interfaces/places';
 export const SearchResults = () => {
-	const { isLoadingPlaces, places } = useContext(PlacesContext);
-	const { map } = useContext(MapContext);
+	const { isLoadingPlaces, places, userLocation } = useContext(PlacesContext);
+	const { map, getRouteBetweenPoints } = useContext(MapContext);
 	const [activeId, setActiveId] = useState('');
 	const onPlaceClicked = (place: Feature) => {
 		setActiveId(place.id);
@@ -13,6 +13,12 @@ export const SearchResults = () => {
 			zoom: 14,
 			center: [lng, lat],
 		});
+	};
+	const getRoute = (place: Feature) => {
+		if (!userLocation) return;
+		const [lng, lat] = place.center;
+
+		getRouteBetweenPoints(userLocation, [lng, lat]);
 	};
 	if (isLoadingPlaces) {
 		return <LoadingPlaces />;
@@ -25,11 +31,15 @@ export const SearchResults = () => {
 			{places.map((place) => (
 				<li
 					key={place.id}
+					onClick={() => onPlaceClicked(place)}
 					className={`list-group-item list-group-item-action pointer ${activeId === place.id && 'active'}`}
 				>
 					<h6>{place.text_es}</h6>
 					<p style={{ fontSize: '12px' }}>{place.place_name}</p>
-					<button onClick={() => onPlaceClicked(place)} className={`btn btn-sm ${activeId === place.id? 'btn-outline-light': 'btn-outline-primary'}`}>
+					<button
+						onClick={() => getRoute(place)}
+						className={`btn btn-sm ${activeId === place.id ? 'btn-outline-light' : 'btn-outline-primary'}`}
+					>
 						Direcciones
 					</button>
 				</li>
